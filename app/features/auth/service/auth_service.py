@@ -18,7 +18,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.config import get_settings
 from app.features.auth.exceptions.auth_exceptions import (
     InvalidCredentialsException,
-    InvalidPurposeTokenException,
+    InvalidPurposeTokenException,   
     InvalidRefreshTokenException,
 )
 from app.features.auth.models.user import User, UserRole
