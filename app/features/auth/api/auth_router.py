@@ -6,6 +6,7 @@ placeholder 501s remain. Handlers stay thin: request validation,
 dependency resolution, and response-contract shaping only.
 """
 from fastapi import APIRouter, BackgroundTasks, Depends, status
+from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
@@ -55,6 +56,29 @@ async def login(
 ) -> ResponseEnvelope[TokenResponse]:
     tokens = await AuthService(db).login(payload)
     return ResponseEnvelope(data=tokens, message="Login successful.")
+
+
+@router.post(
+    "/token",
+    response_model=TokenResponse,
+    summary="OAuth2-compatible token endpoint (used by Swagger's Authorize button)",
+    include_in_schema=False,
+)
+async def login_for_swagger(
+    form_data: OAuth2PasswordRequestForm = Depends(),
+    db: AsyncSession = Depends(get_db),
+) -> TokenResponse:
+    # OAuth2PasswordRequestForm always sends the identifier as
+    # "username" — we treat it as the account email.
+    #
+    # IMPORTANT: this must return the raw TokenResponse, NOT wrapped in
+    # ResponseEnvelope. Swagger UI's OAuth2 "Authorize" dialog expects
+    # `access_token` at the top level of the JSON body (per the OAuth2
+    # spec) — if it's nested under "data", Swagger silently fails to
+    # pick up the token and every subsequent authorized request 401s
+    # with TOKEN_INVALID.
+    payload = LoginRequest(email=form_data.username, password=form_data.password)
+    return await AuthService(db).login(payload)
 
 
 @router.post(

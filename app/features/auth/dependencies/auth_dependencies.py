@@ -28,7 +28,7 @@ from app.shared.security import TokenType, decode_token
 settings = get_settings()
 
 oauth2_scheme = OAuth2PasswordBearer(
-    tokenUrl=f"{settings.API_V1_PREFIX}/auth/login",
+    tokenUrl=f"{settings.API_V1_PREFIX}/auth/token",
     auto_error=False,
 )
 

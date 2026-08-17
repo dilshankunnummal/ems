@@ -16,6 +16,18 @@ from app.shared.responses import error_response
 logger = structlog.get_logger(__name__)
 
 
+def _sanitize_errors(errors: list) -> list:
+    """Pydantic/Starlette validation errors can include the raw request
+    body as `bytes` in the "input" field (e.g. malformed or non-JSON
+    bodies). `bytes` isn't JSON-serializable, so JSONResponse would crash
+    when trying to return these errors. Decode any bytes to str first.
+    """
+    for err in errors:
+        if isinstance(err.get("input"), bytes):
+            err["input"] = err["input"].decode("utf-8", errors="replace")
+    return errors
+
+
 def register_exception_handlers(app: FastAPI) -> None:
     @app.exception_handler(AppException)
     async def app_exception_handler(request: Request, exc: AppException) -> JSONResponse:
@@ -34,11 +46,12 @@ def register_exception_handlers(app: FastAPI) -> None:
     async def validation_exception_handler(
         request: Request, exc: RequestValidationError
     ) -> JSONResponse:
-        logger.warning("validation_error", path=str(request.url), errors=exc.errors())
+        errors = _sanitize_errors(exc.errors())
+        logger.warning("validation_error", path=str(request.url), errors=errors)
         return JSONResponse(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             content=error_response(
-                "Request validation failed.", "VALIDATION_ERROR", exc.errors()
+                "Request validation failed.", "VALIDATION_ERROR", errors
             ),
         )
 

@@ -11,7 +11,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.features.auth.models.user import Role
+from app.features.auth.models.user import Role, UserRole
 from app.shared.exceptions import ConflictException
 
 logger = structlog.get_logger(__name__)
@@ -33,6 +33,11 @@ class RoleRepository:
         result = await self.db.execute(select(Role).where(Role.name == name))
         return result.scalar_one_or_none()
 
+    async def list_all(self) -> list[Role]:
+        """Fetch every role in the system, ordered by name."""
+        result = await self.db.execute(select(Role).order_by(Role.name))
+        return list(result.scalars().all())
+
     async def create(self, *, name: str, description: str | None = None) -> Role:
         """Persist a new role row."""
         role = Role(name=name, description=description)
@@ -47,3 +52,29 @@ class RoleRepository:
             ) from exc
         await self.db.refresh(role)
         return role
+
+    async def get_user_role_link(
+        self, user_id: uuid.UUID, role_id: uuid.UUID
+    ) -> UserRole | None:
+        """Fetch the `UserRole` grant row for a (user, role) pair, if any."""
+        result = await self.db.execute(
+            select(UserRole).where(
+                UserRole.user_id == user_id, UserRole.role_id == role_id
+            )
+        )
+        return result.scalar_one_or_none()
+
+    async def assign_role(self, user_id: uuid.UUID, role_id: uuid.UUID) -> UserRole:
+        """Grant a role to a user. Caller must ensure the grant doesn't
+        already exist (see `get_user_role_link`) to get a clean
+        application-level conflict error instead of a raw DB IntegrityError.
+        """
+        link = UserRole(user_id=user_id, role_id=role_id)
+        self.db.add(link)
+        await self.db.flush()
+        return link
+
+    async def revoke_role(self, link: UserRole) -> None:
+        """Remove an existing role grant."""
+        await self.db.delete(link)
+        await self.db.flush()
