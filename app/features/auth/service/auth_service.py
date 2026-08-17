@@ -9,7 +9,6 @@ password verification, refresh-token rotation and revocation, default
 role assignment, purpose-token validation — lives here.
 """
 from datetime import datetime, timedelta, timezone
-from uuid import UUID
 
 import structlog
 from fastapi import BackgroundTasks
@@ -18,7 +17,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.config import get_settings
 from app.features.auth.exceptions.auth_exceptions import (
     InvalidCredentialsException,
-    InvalidPurposeTokenException,   
+    InvalidPurposeTokenException,  
+
     InvalidRefreshTokenException,
 )
 from app.features.auth.models.user import User, UserRole
