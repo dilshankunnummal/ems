@@ -12,6 +12,7 @@ Centralized here so no feature hashes passwords itself — one hashing
 policy (algorithm, work factor) enforced everywhere, upgradeable in a
 single place later.
 """
+
 import bcrypt
 
 from app.shared.exceptions import BadRequestException

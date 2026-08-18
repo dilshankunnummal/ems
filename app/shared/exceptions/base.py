@@ -5,6 +5,7 @@ Every feature raises one of these instead of a raw HTTPException, so
 the global exception handler (app/shared/middleware/exception_handler.py)
 can translate them into a single consistent JSON error contract.
 """
+
 from typing import Any
 
 

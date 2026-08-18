@@ -5,6 +5,7 @@ Every endpoint in this router is now fully wired to `AuthService` — no
 placeholder 501s remain. Handlers stay thin: request validation,
 dependency resolution, and response-contract shaping only.
 """
+
 from fastapi import APIRouter, BackgroundTasks, Depends, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -121,7 +122,9 @@ async def change_password(
     await AuthService(db).change_password(
         user, payload.current_password, payload.new_password
     )
-    return ResponseEnvelope(message="Password changed successfully. Please log in again.")
+    return ResponseEnvelope(
+        message="Password changed successfully. Please log in again."
+    )
 
 
 @router.post(

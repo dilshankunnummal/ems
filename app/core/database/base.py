@@ -6,6 +6,7 @@ it needs (`UUIDMixin`, `TimestampMixin`, `SoftDeleteMixin`). Keeping these
 here means primary-key strategy, audit columns, and soft-delete semantics
 are defined exactly once and stay consistent across the entire schema.
 """
+
 import uuid
 from datetime import datetime
 from typing import Any

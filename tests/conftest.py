@@ -2,6 +2,7 @@
 Shared pytest fixtures: an isolated test database (rolled back per test)
 and an httpx AsyncClient wired to the FastAPI app via ASGI transport.
 """
+
 import asyncio
 from collections.abc import AsyncGenerator
 

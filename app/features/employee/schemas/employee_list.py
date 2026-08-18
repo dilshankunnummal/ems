@@ -1,17 +1,17 @@
 from datetime import date
 from uuid import UUID
- 
+
 from pydantic import BaseModel, ConfigDict, computed_field
- 
+
 from app.features.employee.models.enums import EmploymentStatus, EmploymentType
 from app.shared.pagination.response import PaginatedResponse
- 
+
 __all__ = ["EmployeeListItemResponse", "EmployeeListResponse"]
- 
- 
+
+
 class EmployeeListItemResponse(BaseModel):
     """A single row in the employee list/table view."""
- 
+
     model_config = ConfigDict(
         from_attributes=True,
         json_schema_extra={
@@ -31,7 +31,7 @@ class EmployeeListItemResponse(BaseModel):
             ]
         },
     )
- 
+
     id: UUID
     employee_code: str
     first_name: str
@@ -42,16 +42,16 @@ class EmployeeListItemResponse(BaseModel):
     department_id: UUID | None
     hire_date: date
     profile_image_path: str | None
- 
+
     @computed_field  # type: ignore[prop-decorator]
     @property
     def full_name(self) -> str:
         return f"{self.first_name} {self.last_name}"
- 
- 
+
+
 class EmployeeListResponse(PaginatedResponse[EmployeeListItemResponse]):
     """Named, concrete paginated-response type for `GET /employees`.
- 
+
     Subclassing `PaginatedResponse[EmployeeListItemResponse]` (rather
     than using the generic alias inline on the route) gives this shape
     its own name in the generated OpenAPI schema — `EmployeeListResponse`
@@ -60,7 +60,7 @@ class EmployeeListResponse(PaginatedResponse[EmployeeListItemResponse]):
     (`total`, `page`, `total_pages`, `has_next`, `has_previous`, and the
     `.create()` constructor) rather than redefining it.
     """
- 
+
     model_config = ConfigDict(
         json_schema_extra={
             "examples": [
@@ -89,4 +89,3 @@ class EmployeeListResponse(PaginatedResponse[EmployeeListItemResponse]):
             ]
         }
     )
- 

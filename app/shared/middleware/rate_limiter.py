@@ -10,6 +10,7 @@ Individual routes then opt in with a dependency:
 A default limiter (`default_rate_limiter`) is provided for routes that
 just want the app-wide configured limit without picking custom numbers.
 """
+
 import structlog
 from fastapi_limiter import FastAPILimiter
 from fastapi_limiter.depends import RateLimiter
@@ -42,4 +43,6 @@ def default_rate_limiter() -> RateLimiter:
 
     Usage: dependencies=[Depends(default_rate_limiter())]
     """
-    return RateLimiter(times=settings.RATE_LIMIT_TIMES, seconds=settings.RATE_LIMIT_SECONDS)
+    return RateLimiter(
+        times=settings.RATE_LIMIT_TIMES, seconds=settings.RATE_LIMIT_SECONDS
+    )

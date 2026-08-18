@@ -27,12 +27,15 @@ Authorization policy (documented per-route below):
       belongs behind `/auth/me`-style routes or a future `/employees/me`
       endpoint, not this admin-facing CRUD surface.
 """
+
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, status
 
 from app.features.auth.dependencies.auth_dependencies import permission_required
-from app.features.employee.dependencies.employee_dependencies import get_employee_service
+from app.features.employee.dependencies.employee_dependencies import (
+    get_employee_service,
+)
 from app.features.employee.schemas.employee import (
     EmployeeCreateRequest,
     EmployeeDetailResponse,
@@ -45,7 +48,10 @@ from app.features.employee.schemas.employee_list import (
     EmployeeListItemResponse,
     EmployeeListResponse,
 )
-from app.features.employee.schemas.filters import EmployeeFilterParams, employee_filter_params
+from app.features.employee.schemas.filters import (
+    EmployeeFilterParams,
+    employee_filter_params,
+)
 from app.features.employee.service.employee_service import EmployeeService
 from app.shared.pagination.params import PaginationParams, pagination_params
 from app.shared.responses.envelope import ResponseEnvelope
@@ -86,7 +92,9 @@ async def list_employees(
     service: EmployeeService = Depends(get_employee_service),
 ) -> ResponseEnvelope[EmployeeListResponse]:
     employees, total = await service.list_employees(pagination, filters)
-    items = [EmployeeListItemResponse.model_validate(employee) for employee in employees]
+    items = [
+        EmployeeListItemResponse.model_validate(employee) for employee in employees
+    ]
     return ResponseEnvelope(
         data=EmployeeListResponse.create(items, total, pagination),
     )

@@ -3,6 +3,7 @@ Alembic environment script — wired to the project's async engine and
 declarative Base so `alembic revision --autogenerate` picks up every
 model registered across every feature package.
 """
+
 import asyncio
 from logging.config import fileConfig
 
@@ -50,7 +51,9 @@ def run_migrations_offline() -> None:
 
 
 def do_run_migrations(connection: Connection) -> None:
-    context.configure(connection=connection, target_metadata=target_metadata, compare_type=True)
+    context.configure(
+        connection=connection, target_metadata=target_metadata, compare_type=True
+    )
     with context.begin_transaction():
         context.run_migrations()
 

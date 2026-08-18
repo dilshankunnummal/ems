@@ -9,6 +9,7 @@ link can never be replayed as an API access token, and an access token can
 never be replayed as a reset link. Kept local to the auth feature since
 nothing outside auth needs them.
 """
+
 from datetime import datetime, timedelta, timezone
 from uuid import UUID
 
@@ -40,14 +41,18 @@ def _create_purpose_token(user_id: str, purpose: str, expires_delta: timedelta) 
 def create_password_reset_token(user_id: str) -> str:
     """Mint a 30-minute password-reset token for the given user id."""
     return _create_purpose_token(
-        user_id, PASSWORD_RESET_PURPOSE, timedelta(minutes=PASSWORD_RESET_EXPIRE_MINUTES)
+        user_id,
+        PASSWORD_RESET_PURPOSE,
+        timedelta(minutes=PASSWORD_RESET_EXPIRE_MINUTES),
     )
 
 
 def create_email_verification_token(user_id: str) -> str:
     """Mint a 24-hour email-verification token for the given user id."""
     return _create_purpose_token(
-        user_id, EMAIL_VERIFICATION_PURPOSE, timedelta(hours=EMAIL_VERIFICATION_EXPIRE_HOURS)
+        user_id,
+        EMAIL_VERIFICATION_PURPOSE,
+        timedelta(hours=EMAIL_VERIFICATION_EXPIRE_HOURS),
     )
 
 
@@ -62,7 +67,9 @@ def decode_purpose_token(token: str, expected_purpose: str) -> UUID:
     given token *almost* worked.
     """
     try:
-        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
+        payload = jwt.decode(
+            token, settings.SECRET_KEY, algorithms=[settings.JWT_ALGORITHM]
+        )
     except JWTError as exc:
         raise InvalidPurposeTokenException() from exc
 

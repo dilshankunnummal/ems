@@ -5,7 +5,12 @@ Thin wrappers over the shared exception hierarchy so every authentication
 failure mode gets a stable, descriptive `error_code` without each call
 site repeating the same message/status boilerplate.
 """
-from app.shared.exceptions import ConflictException, NotFoundException, UnauthorizedException
+
+from app.shared.exceptions import (
+    ConflictException,
+    NotFoundException,
+    UnauthorizedException,
+)
 
 
 class InvalidCredentialsException(UnauthorizedException):

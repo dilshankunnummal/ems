@@ -6,6 +6,7 @@ These are plain functions (not tied to any one model) so a schema in
 strength rule, phone format, or file-extension whitelist without
 duplicating the logic.
 """
+
 import re
 from pathlib import Path
 
@@ -41,7 +42,9 @@ def validate_phone_number(phone: str) -> str:
     """Validate an E.164-ish phone number. Raises ValueError for Pydantic."""
     cleaned = phone.strip().replace(" ", "").replace("-", "")
     if not _PHONE_PATTERN.match(cleaned):
-        raise ValueError("Phone number must be a valid international format, e.g. +14155552671.")
+        raise ValueError(
+            "Phone number must be a valid international format, e.g. +14155552671."
+        )
     return cleaned
 
 

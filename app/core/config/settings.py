@@ -6,6 +6,7 @@ module reads configuration through the `get_settings()` accessor so that
 settings are loaded once, validated once, and cached for the lifetime of
 the process.
 """
+
 from functools import lru_cache
 from typing import List
 from urllib.parse import quote_plus
@@ -101,7 +102,9 @@ class Settings(BaseSettings):
 
     @property
     def cors_origins_list(self) -> List[str]:
-        return [origin.strip() for origin in self.CORS_ORIGINS.split(",") if origin.strip()]
+        return [
+            origin.strip() for origin in self.CORS_ORIGINS.split(",") if origin.strip()
+        ]
 
     # --- Email / SMTP ---
     SMTP_HOST: str = "smtp.gmail.com"
@@ -125,7 +128,9 @@ class Settings(BaseSettings):
 
     @property
     def allowed_document_extensions_list(self) -> List[str]:
-        return [ext.strip().lower() for ext in self.ALLOWED_DOCUMENT_EXTENSIONS.split(",")]
+        return [
+            ext.strip().lower() for ext in self.ALLOWED_DOCUMENT_EXTENSIONS.split(",")
+        ]
 
     # --- Pagination ---
     DEFAULT_PAGE_SIZE: int = 20
@@ -151,7 +156,10 @@ class Settings(BaseSettings):
         forgeable JWT in a live environment.
         """
         if self.is_production:
-            if self.SECRET_KEY.lower() in _INSECURE_DEFAULT_SECRETS or len(self.SECRET_KEY) < 32:
+            if (
+                self.SECRET_KEY.lower() in _INSECURE_DEFAULT_SECRETS
+                or len(self.SECRET_KEY) < 32
+            ):
                 raise ValueError(
                     "SECRET_KEY must be a unique, randomly generated value of at "
                     "least 32 characters when APP_ENV=production."

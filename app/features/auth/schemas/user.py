@@ -1,4 +1,5 @@
 """Response schema for exposing a User to API clients."""
+
 import uuid
 from datetime import datetime
 

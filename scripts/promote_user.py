@@ -10,6 +10,7 @@ Usage (from the project root, with your venv activated):
     python scripts/promote_user.py user@example.com admin
     python scripts/promote_user.py user@example.com hr
 """
+
 import asyncio
 import sys
 from pathlib import Path

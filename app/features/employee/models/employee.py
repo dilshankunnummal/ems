@@ -1,6 +1,6 @@
 import uuid
 from datetime import date
- 
+
 from sqlalchemy import (
     CheckConstraint,
     Date,
@@ -12,21 +12,21 @@ from sqlalchemy import (
 )
 from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
- 
+
 from app.core.database import Base, SoftDeleteMixin, TimestampMixin, UUIDMixin
 from app.features.employee.models.enums import EmploymentStatus, EmploymentType, Gender
- 
- 
+
+
 class Employee(Base, UUIDMixin, TimestampMixin, SoftDeleteMixin):
     """The HR profile record for a single employee.
- 
+
     Exactly one `Employee` row exists per `User` row (enforced by the
     unique constraint on `user_id`). Deletion is always soft (see
     `SoftDeleteMixin`) — repositories must filter `is_deleted == False`
     on every default read and expose an explicit restore path rather
     than ever issuing a hard DELETE against this table.
     """
- 
+
     __tablename__ = "employees"
     __table_args__ = (
         UniqueConstraint("user_id", name="uq_employees_user_id"),
@@ -55,7 +55,7 @@ class Employee(Base, UUIDMixin, TimestampMixin, SoftDeleteMixin):
         # default sort order for the employee list endpoint.
         Index("ix_employees_last_name_first_name", "last_name", "first_name"),
     )
- 
+
     # --- Identity / linkage -------------------------------------------------
     user_id: Mapped[uuid.UUID] = mapped_column(
         PG_UUID(as_uuid=True),
@@ -67,7 +67,7 @@ class Employee(Base, UUIDMixin, TimestampMixin, SoftDeleteMixin):
     employee_code: Mapped[str] = mapped_column(
         String(20), nullable=False, unique=True, index=True
     )
- 
+
     # --- Personal details -----------------------------------------------------
     first_name: Mapped[str] = mapped_column(String(100), nullable=False)
     last_name: Mapped[str] = mapped_column(String(100), nullable=False)
@@ -78,7 +78,7 @@ class Employee(Base, UUIDMixin, TimestampMixin, SoftDeleteMixin):
         nullable=True,
     )
     address: Mapped[str | None] = mapped_column(String(255), nullable=True)
- 
+
     # --- Employment details --------------------------------------------------
     hire_date: Mapped[date] = mapped_column(Date, nullable=False)
     employment_status: Mapped[EmploymentStatus] = mapped_column(
@@ -105,7 +105,7 @@ class Employee(Base, UUIDMixin, TimestampMixin, SoftDeleteMixin):
         server_default=EmploymentType.FULL_TIME.value,
     )
     job_title: Mapped[str | None] = mapped_column(String(150), nullable=True)
- 
+
     # --- Organizational relationships ----------------------------------------
     # No FK constraint yet — see module docstring "Deferred foreign key".
     department_id: Mapped[uuid.UUID | None] = mapped_column(
@@ -117,11 +117,11 @@ class Employee(Base, UUIDMixin, TimestampMixin, SoftDeleteMixin):
         nullable=True,
         index=True,
     )
- 
+
     # --- Uploaded assets -------------------------------------------------------
     profile_image_path: Mapped[str | None] = mapped_column(String(500), nullable=True)
     resume_path: Mapped[str | None] = mapped_column(String(500), nullable=True)
- 
+
     # --- Relationships -----------------------------------------------------
     manager: Mapped["Employee | None"] = relationship(
         "Employee",

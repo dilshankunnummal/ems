@@ -17,7 +17,7 @@ from app.features.employee.schemas.filters import (
     EmployeeSortOrder,
     employee_filter_params,
 )
- 
+
 __all__ = [
     "EmployeeUserSummary",
     "EmployeeCreateRequest",
@@ -33,4 +33,3 @@ __all__ = [
     "EmployeeSortOrder",
     "employee_filter_params",
 ]
- 

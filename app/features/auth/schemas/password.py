@@ -1,4 +1,5 @@
 """Request schemas for the change/forgot/reset password flows."""
+
 from pydantic import BaseModel, ConfigDict, EmailStr, field_validator, model_validator
 
 from app.shared.validators.common import validate_strong_password

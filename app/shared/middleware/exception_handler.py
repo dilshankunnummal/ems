@@ -4,6 +4,7 @@ Global exception handlers registered on the FastAPI app instance.
 Guarantees that every error response — expected or not — leaves the API
 in the same JSON shape defined by `app.shared.responses.envelope`.
 """
+
 import structlog
 from fastapi import FastAPI, Request, status
 from fastapi.exceptions import RequestValidationError
@@ -30,7 +31,9 @@ def _sanitize_errors(errors: list) -> list:
 
 def register_exception_handlers(app: FastAPI) -> None:
     @app.exception_handler(AppException)
-    async def app_exception_handler(request: Request, exc: AppException) -> JSONResponse:
+    async def app_exception_handler(
+        request: Request, exc: AppException
+    ) -> JSONResponse:
         logger.warning(
             "app_exception",
             path=str(request.url),
@@ -65,8 +68,12 @@ def register_exception_handlers(app: FastAPI) -> None:
         )
 
     @app.exception_handler(Exception)
-    async def unhandled_exception_handler(request: Request, exc: Exception) -> JSONResponse:
-        logger.error("unhandled_exception", path=str(request.url), error=str(exc), exc_info=True)
+    async def unhandled_exception_handler(
+        request: Request, exc: Exception
+    ) -> JSONResponse:
+        logger.error(
+            "unhandled_exception", path=str(request.url), error=str(exc), exc_info=True
+        )
         return JSONResponse(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             content=error_response(

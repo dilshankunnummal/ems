@@ -12,6 +12,7 @@ query params so every list endpoint returns the same shape:
       "has_previous": false
     }
 """
+
 import math
 from typing import Generic, Sequence, TypeVar
 

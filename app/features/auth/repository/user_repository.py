@@ -1,4 +1,3 @@
-
 """
 Data-access layer for the User model.
 
@@ -6,6 +5,7 @@ Contains only database operations — no password hashing, token issuing,
 or other business rules. Those belong to the service layer, wired up in
 a later phase.
 """
+
 import uuid
 
 import structlog

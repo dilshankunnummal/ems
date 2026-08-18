@@ -1,6 +1,7 @@
 """
 Redis connection factory shared by caching and rate-limiting.
 """
+
 import structlog
 from redis.asyncio import ConnectionPool, Redis
 

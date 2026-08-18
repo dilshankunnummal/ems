@@ -6,6 +6,7 @@ application. Every feature's repository receives an `AsyncSession`
 through the `get_db` dependency — nothing imports or constructs the
 engine directly.
 """
+
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 

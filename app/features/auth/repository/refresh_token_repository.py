@@ -4,6 +4,7 @@ Data-access layer for the RefreshToken model.
 Contains only database operations — rotation policy (revoke-on-refresh,
 reuse detection, etc.) belongs to the service layer.
 """
+
 import uuid
 from datetime import datetime
 

@@ -10,6 +10,7 @@ roles it can hold, and the refresh tokens it has issued.
 No business logic lives here. Password hashing, token issuance, and
 role-assignment rules belong to the repository/service layers.
 """
+
 import uuid
 from datetime import datetime
 
@@ -25,7 +26,9 @@ class User(Base, UUIDMixin, TimestampMixin):
 
     __tablename__ = "users"
 
-    email: Mapped[str] = mapped_column(String(255), unique=True, index=True, nullable=False)
+    email: Mapped[str] = mapped_column(
+        String(255), unique=True, index=True, nullable=False
+    )
     hashed_password: Mapped[str] = mapped_column(String(255), nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     is_verified: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
@@ -46,7 +49,9 @@ class Role(Base, UUIDMixin, TimestampMixin):
 
     __tablename__ = "roles"
 
-    name: Mapped[str] = mapped_column(String(50), unique=True, index=True, nullable=False)
+    name: Mapped[str] = mapped_column(
+        String(50), unique=True, index=True, nullable=False
+    )
     description: Mapped[str | None] = mapped_column(String(255), nullable=True)
 
     user_roles: Mapped[list["UserRole"]] = relationship(
@@ -103,8 +108,12 @@ class RefreshToken(Base, UUIDMixin):
         nullable=False,
         index=True,
     )
-    token: Mapped[str] = mapped_column(String(512), unique=True, index=True, nullable=False)
-    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    token: Mapped[str] = mapped_column(
+        String(512), unique=True, index=True, nullable=False
+    )
+    expires_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False
+    )
     revoked: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),

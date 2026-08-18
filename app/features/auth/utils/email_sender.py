@@ -7,6 +7,7 @@ provider SDK — because every call site here runs inside a FastAPI
 Postmark, SendGrid) behind this same two-function surface later without
 touching the service layer that calls it.
 """
+
 import smtplib
 from email.message import EmailMessage
 

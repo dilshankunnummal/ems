@@ -6,7 +6,12 @@ failure mode gets a stable, descriptive `error_code` without each call
 site repeating the same message/status boilerplate — mirrors
 `app.features.auth.exceptions.auth_exceptions`.
 """
-from app.shared.exceptions import BadRequestException, ConflictException, NotFoundException
+
+from app.shared.exceptions import (
+    BadRequestException,
+    ConflictException,
+    NotFoundException,
+)
 
 
 class EmployeeNotFoundException(NotFoundException):

@@ -1,4 +1,5 @@
 """Token response/request schemas shared by login, refresh, and logout."""
+
 from pydantic import BaseModel, ConfigDict
 
 

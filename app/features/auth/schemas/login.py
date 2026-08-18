@@ -1,4 +1,5 @@
 """Request schema for user login."""
+
 from pydantic import BaseModel, ConfigDict, EmailStr
 
 

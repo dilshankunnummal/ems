@@ -4,6 +4,7 @@ Data-access layer for the Role model.
 Contains only database operations — role-assignment rules and default
 role seeding belong to the service layer.
 """
+
 import uuid
 
 import structlog

@@ -6,6 +6,7 @@ identity lifecycle (register/login/password/verification); this one
 owns admin-driven changes to *other* users' permissions. Different
 caller, different audit/authorization shape, so it's a different class.
 """
+
 from uuid import UUID
 
 import structlog

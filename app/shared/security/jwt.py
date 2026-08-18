@@ -12,6 +12,7 @@ Both also carry `jti` (a unique token ID) so individual tokens can be
 revoked/blacklisted (e.g. in Redis) without invalidating every token a
 user holds.
 """
+
 import uuid
 from datetime import datetime, timedelta, timezone
 from enum import Enum
@@ -108,11 +109,17 @@ def decode_token(token: str, expected_type: TokenType | None = None) -> TokenPay
     application's own exception hierarchy.
     """
     try:
-        raw = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
+        raw = jwt.decode(
+            token, settings.SECRET_KEY, algorithms=[settings.JWT_ALGORITHM]
+        )
     except ExpiredSignatureError as exc:
-        raise UnauthorizedException("Token has expired.", error_code="TOKEN_EXPIRED") from exc
+        raise UnauthorizedException(
+            "Token has expired.", error_code="TOKEN_EXPIRED"
+        ) from exc
     except JWTError as exc:
-        raise UnauthorizedException("Could not validate token.", error_code="TOKEN_INVALID") from exc
+        raise UnauthorizedException(
+            "Could not validate token.", error_code="TOKEN_INVALID"
+        ) from exc
 
     try:
         payload = TokenPayload(**raw)

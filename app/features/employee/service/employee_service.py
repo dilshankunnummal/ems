@@ -12,6 +12,7 @@ lives here. The repository layer stays pure data access with zero
 business rules, exactly mirroring how `AuthService` sits on top of
 `UserRepository` / `RoleRepository` / `RefreshTokenRepository`.
 """
+
 import uuid
 
 import structlog
@@ -71,7 +72,9 @@ class EmployeeService:
         """
         user = await self.users.get_by_id(payload.user_id)
         if user is None:
-            logger.warning("employee_create_rejected_unknown_user", user_id=str(payload.user_id))
+            logger.warning(
+                "employee_create_rejected_unknown_user", user_id=str(payload.user_id)
+            )
             raise LinkedUserNotFoundException()
 
         if await self.employees.exists_by_user_id(payload.user_id):
@@ -143,7 +146,9 @@ class EmployeeService:
         """
         employee = await self.get_employee(employee_id)
         user = await self.users.get_by_id(employee.user_id)
-        user_summary = EmployeeUserSummary.model_validate(user) if user is not None else None
+        user_summary = (
+            EmployeeUserSummary.model_validate(user) if user is not None else None
+        )
         return employee, user_summary
 
     async def list_employees(
@@ -193,7 +198,9 @@ class EmployeeService:
         policy decision is deferred rather than hard-coded prematurely.
         """
         employee = await self.get_employee(employee_id)
-        employee = await self.employees.update_status(employee, payload.employment_status)
+        employee = await self.employees.update_status(
+            employee, payload.employment_status
+        )
         logger.info(
             "employee_status_transitioned",
             employee_id=str(employee.id),

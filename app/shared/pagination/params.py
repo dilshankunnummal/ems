@@ -6,6 +6,7 @@ Every feature's "list" endpoint depends on `PaginationParams` via
 router — one implementation, one set of validation rules, one place to
 change the defaults.
 """
+
 from enum import Enum
 
 from fastapi import Query
@@ -47,7 +48,9 @@ def pagination_params(
     ),
     sort_by: str | None = Query(None, description="Column name to sort by"),
     sort_order: SortOrder = Query(SortOrder.DESC, description="asc or desc"),
-    search: str | None = Query(None, min_length=1, max_length=200, description="Free-text search"),
+    search: str | None = Query(
+        None, min_length=1, max_length=200, description="Free-text search"
+    ),
 ) -> PaginationParams:
     """FastAPI dependency that assembles validated pagination parameters
     from the query string. Use as:

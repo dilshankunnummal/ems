@@ -5,6 +5,7 @@ Call `configure_logging()` once at application startup. Every subsequent
 `structlog.get_logger(__name__)` call across the codebase then produces
 consistent, structured (JSON in production) log lines.
 """
+
 import logging
 import sys
 

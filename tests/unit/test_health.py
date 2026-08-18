@@ -1,4 +1,5 @@
 """Smoke tests for the health/root endpoints — verifies the app boots."""
+
 import pytest
 from httpx import AsyncClient
 

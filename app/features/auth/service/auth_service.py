@@ -8,6 +8,7 @@ Route handlers stay thin (see `api/auth_router.py`); every rule about
 password verification, refresh-token rotation and revocation, default
 role assignment, purpose-token validation — lives here.
 """
+
 from datetime import datetime, timedelta, timezone
 
 import structlog
@@ -17,8 +18,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.config import get_settings
 from app.features.auth.exceptions.auth_exceptions import (
     InvalidCredentialsException,
-    InvalidPurposeTokenException,  
-
+    InvalidPurposeTokenException,
     InvalidRefreshTokenException,
 )
 from app.features.auth.models.user import User, UserRole
@@ -28,7 +28,10 @@ from app.features.auth.repository.user_repository import UserRepository
 from app.features.auth.schemas.login import LoginRequest
 from app.features.auth.schemas.register import RegisterRequest
 from app.features.auth.schemas.token import TokenResponse
-from app.features.auth.utils.email_sender import send_password_reset_email, send_verification_email
+from app.features.auth.utils.email_sender import (
+    send_password_reset_email,
+    send_verification_email,
+)
 from app.features.auth.utils.token_utils import (
     EMAIL_VERIFICATION_PURPOSE,
     PASSWORD_RESET_PURPOSE,
@@ -71,7 +74,9 @@ class AuthService:
     # Register
     # ------------------------------------------------------------------ #
 
-    async def register(self, payload: RegisterRequest, background_tasks: BackgroundTasks) -> User:
+    async def register(
+        self, payload: RegisterRequest, background_tasks: BackgroundTasks
+    ) -> User:
         """Create a new user account with the default role and send a
         verification email in the background.
 
@@ -87,7 +92,9 @@ class AuthService:
             )
 
         hashed_password = hash_password(payload.password)
-        user = await self.users.create(email=payload.email, hashed_password=hashed_password)
+        user = await self.users.create(
+            email=payload.email, hashed_password=hashed_password
+        )
         await self._assign_default_role(user)
 
         token = create_email_verification_token(str(user.id))
@@ -95,7 +102,9 @@ class AuthService:
         print("EMAIL VERIFICATION TOKEN:")
         print(token)
         print("=" * 80 + "\n")
-        background_tasks.add_task(send_verification_email, to_email=user.email, token=token)
+        background_tasks.add_task(
+            send_verification_email, to_email=user.email, token=token
+        )
 
         logger.info("user_registered", user_id=str(user.id), email=user.email)
         return user
@@ -222,7 +231,9 @@ class AuthService:
             return
 
         token = create_password_reset_token(str(user.id))
-        background_tasks.add_task(send_password_reset_email, to_email=user.email, token=token)
+        background_tasks.add_task(
+            send_password_reset_email, to_email=user.email, token=token
+        )
         logger.info("password_reset_requested", user_id=str(user.id))
 
     async def reset_password(self, token: str, new_password: str) -> None:
@@ -249,7 +260,9 @@ class AuthService:
         """Mark a user's email as verified using a token issued at
         registration.
         """
-        user_id = decode_purpose_token(token, expected_purpose=EMAIL_VERIFICATION_PURPOSE)
+        user_id = decode_purpose_token(
+            token, expected_purpose=EMAIL_VERIFICATION_PURPOSE
+        )
 
         user = await self.users.get_by_id(user_id)
         if user is None:

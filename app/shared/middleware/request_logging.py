@@ -3,6 +3,7 @@ Middleware that logs every request/response with timing and a correlation
 ID, and stamps that correlation ID onto the response so clients and logs
 can be cross-referenced.
 """
+
 import time
 import uuid
 

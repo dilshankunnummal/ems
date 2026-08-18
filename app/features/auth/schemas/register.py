@@ -1,4 +1,5 @@
 """Request schema for user registration."""
+
 from pydantic import BaseModel, ConfigDict, EmailStr, field_validator, model_validator
 
 from app.shared.validators.common import validate_strong_password

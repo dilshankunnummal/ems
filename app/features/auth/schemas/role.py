@@ -1,4 +1,5 @@
 """Request/response schemas for role-management endpoints."""
+
 from pydantic import BaseModel, ConfigDict, Field
 
 

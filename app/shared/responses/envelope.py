@@ -6,6 +6,7 @@ Success:
 Error:
     {"success": false, "message": "...", "error_code": "...", "details": {...}}
 """
+
 from typing import Any, Generic, TypeVar
 
 from pydantic import BaseModel
@@ -40,4 +41,9 @@ def error_response(
     error_code: str,
     details: Any = None,
 ) -> dict[str, Any]:
-    return {"success": False, "message": message, "error_code": error_code, "details": details}
+    return {
+        "success": False,
+        "message": message,
+        "error_code": error_code,
+        "details": details,
+    }

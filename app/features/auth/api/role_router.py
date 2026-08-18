@@ -13,6 +13,7 @@ or revoking permissions is deliberately restricted to admins only.
 Users are addressed by email (not user_id) here since that's what an
 admin realistically has on hand when granting access.
 """
+
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 

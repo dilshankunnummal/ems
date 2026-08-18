@@ -1,29 +1,34 @@
 from datetime import date
 from enum import Enum
 from uuid import UUID
- 
+
 from fastapi import Query
 from pydantic import BaseModel, ConfigDict, Field, model_validator
- 
+
 from app.features.employee.models.enums import EmploymentStatus, EmploymentType
- 
+
 # Re-exported (not redefined) so `EmployeeSortOrder` is importable from this
 # module — the employee list endpoint's public sort-direction contract —
 # while the single source of truth for "what ASC/DESC means" stays in
 # `app.shared.pagination`. Duplicating this enum here would risk the two
 # drifting apart (e.g. one gaining a third value the other lacks).
 from app.shared.pagination.params import SortOrder as EmployeeSortOrder
- 
-__all__ = ["EmployeeSortField", "EmployeeSortOrder", "EmployeeFilterParams", "employee_filter_params"]
- 
- 
+
+__all__ = [
+    "EmployeeSortField",
+    "EmployeeSortOrder",
+    "EmployeeFilterParams",
+    "employee_filter_params",
+]
+
+
 class EmployeeSortField(str, Enum):
     """Columns the employee list endpoint permits sorting by.
- 
+
     Values are exact `Employee` model attribute names by design — see
     module docstring.
     """
- 
+
     EMPLOYEE_CODE = "employee_code"
     FIRST_NAME = "first_name"
     LAST_NAME = "last_name"
@@ -32,20 +37,20 @@ class EmployeeSortField(str, Enum):
     JOB_TITLE = "job_title"
     CREATED_AT = "created_at"
     UPDATED_AT = "updated_at"
- 
- 
+
+
 class EmployeeFilterParams(BaseModel):
     """Domain-specific filters for `GET /employees`.
- 
+
     Combined with (not replacing) `app.shared.pagination.PaginationParams`
     on the route: this model carries *what to filter on*, the shared
     model carries *how to page/search/sort-direction*. `sort_by` here is
     the employee-specific, allow-listed counterpart to the shared
     model's generic free-text `sort_by`.
     """
- 
+
     model_config = ConfigDict(str_strip_whitespace=True)
- 
+
     employment_status: EmploymentStatus | None = Field(
         default=None, description="Filter to a single employment status."
     )
@@ -79,7 +84,7 @@ class EmployeeFilterParams(BaseModel):
     sort_order: EmployeeSortOrder = Field(
         default=EmployeeSortOrder.DESC, description="Sort direction."
     )
- 
+
     @model_validator(mode="after")
     def _validate_hire_date_range(self) -> "EmployeeFilterParams":
         if (
@@ -89,8 +94,8 @@ class EmployeeFilterParams(BaseModel):
         ):
             raise ValueError("hire_date_from must not be after hire_date_to.")
         return self
- 
- 
+
+
 def employee_filter_params(
     employment_status: EmploymentStatus | None = Query(
         None, description="Filter to a single employment status."
@@ -114,12 +119,14 @@ def employee_filter_params(
     sort_by: EmployeeSortField = Query(
         EmployeeSortField.CREATED_AT, description="Column to sort results by."
     ),
-    sort_order: EmployeeSortOrder = Query(EmployeeSortOrder.DESC, description="Sort direction."),
+    sort_order: EmployeeSortOrder = Query(
+        EmployeeSortOrder.DESC, description="Sort direction."
+    ),
 ) -> EmployeeFilterParams:
     """FastAPI dependency assembling validated employee filters from the
     query string, mirroring the shape of
     `app.shared.pagination.params.pagination_params`. Use alongside it as:
- 
+
         @router.get("/")
         async def list_employees(
             pagination: PaginationParams = Depends(pagination_params),
@@ -138,4 +145,3 @@ def employee_filter_params(
         sort_by=sort_by,
         sort_order=sort_order,
     )
- 

@@ -11,6 +11,7 @@ Full attribute/resource-level permission logic (beyond simple role
 membership) is out of scope for this foundation phase and lands with
 the rest of the authorization flow later.
 """
+
 import uuid
 from collections.abc import Callable
 
